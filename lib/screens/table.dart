@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos/screens/area_form.dart';
 import 'package:pos/screens/area_list.dart';
+import 'package:pos/screens/table_form.dart';
 import 'package:pos/screens/table_list.dart';
 import '../services/table_controller.dart';
 
@@ -39,10 +40,9 @@ class TableWidget extends StatelessWidget {
             // Add your onPressed code here!
             Get.dialog(
                 Center(
-                    //     child: AreaForm(
-                    //   tableController: tableController,
-                    // )
-                    ),
+                    child: TableForm(
+                  tableController: tableController,
+                )),
                 barrierDismissible: false);
           },
           child: const Icon(Icons.add),

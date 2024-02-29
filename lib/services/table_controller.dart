@@ -23,7 +23,7 @@ class TableController extends GetxController {
     tableList.refresh();
   }
 
-  Future<Response> addTable(AreaFormModel tableFormModel) async {
+  Future<Response> addTable(TableFormModel tableFormModel) async {
     try {
       final response =
           await httpService.postRequest('tables/', tableFormModel.toJson());
