@@ -54,7 +54,6 @@ class UserTypeFormModel {
     if (id != null) data['id'] = id!;
     if (name != null) data['name'] = name!;
     if (description != null) data['description'] = description!;
-
     return data;
   }
 }
@@ -93,10 +92,10 @@ class DiscountFormModel {
     if (code != null) data['code'] = code;
     if (description != null) data['description'] = description;
     if (amount != null) data['amount'] = amount;
-    if (amountType != null) data['amountType'] = amountType;
-    if (expiryDate != null) data['expiryDate'] = expiryDate;
+    if (amountType != null) data['amount_type'] = amountType;
+    if (expiryDate != null) data['expiry_date'] = expiryDate;
     if (discountedProduct != null)
-      data['discountedProduct'] = discountedProduct;
+      data['discounted_roduct'] = discountedProduct;
     return data;
   }
 }
@@ -150,7 +149,8 @@ class PaymentMethodFormModel {
     if (id != null) data['id'] = id;
     if (name != null) data['name'] = name;
     if (description != null) data['description'] = description;
-    if (accountNumber != null) data['accountNumber'] = accountNumber;
+    if (accountNumber != null) data['account_number'] = accountNumber;
+    if (type != null) data['type'] = type;
     return data;
   }
 }

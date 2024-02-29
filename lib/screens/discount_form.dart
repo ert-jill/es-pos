@@ -10,7 +10,7 @@ class DiscountForm extends StatelessWidget {
   DiscountFormModel discountFormModel = DiscountFormModel();
   RxBool isLoading = false.obs;
   RxBool isSubmitting = false.obs;
-  Rx<String?> selectedAmountType = null.obs;
+  Rx<String> selectedAmountType = ''.obs;
 
   TextEditingController _nameFieldController = TextEditingController();
   TextEditingController _codeFieldController = TextEditingController();
@@ -44,7 +44,7 @@ class DiscountForm extends StatelessWidget {
   }
 
   void clearAllTextControllers() {
-    selectedAmountType.value = null;
+    selectedAmountType.value = '';
     _nameFieldController.clear();
     _descriptionFieldController.clear();
     _codeFieldController.clear();
@@ -276,6 +276,12 @@ class DiscountForm extends StatelessWidget {
                                                                       OutlineInputBorder(),
                                                                   labelText:
                                                                       "Amount"),
+                                                              onSaved:
+                                                                  (newValue) {
+                                                                discountFormModel
+                                                                        .amount =
+                                                                    newValue;
+                                                              },
                                                               validator:
                                                                   (value) {
                                                                 if (value ==
@@ -319,8 +325,10 @@ class DiscountForm extends StatelessWidget {
                                                                           }
                                                                           return null;
                                                                         },
-                                                                        value: selectedAmountType
-                                                                            .value,
+                                                                        value: selectedAmountType.value ==
+                                                                                ''
+                                                                            ? null
+                                                                            : selectedAmountType.value,
                                                                         style: const TextStyle(
                                                                             overflow:
                                                                                 TextOverflow.ellipsis),
@@ -339,7 +347,7 @@ class DiscountForm extends StatelessWidget {
                                                                         onSaved:
                                                                             (newValue) {
                                                                           selectedAmountType.value =
-                                                                              newValue;
+                                                                              newValue!;
                                                                           discountFormModel.amountType =
                                                                               newValue;
                                                                         },
