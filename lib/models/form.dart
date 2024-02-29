@@ -185,3 +185,21 @@ class TableFormModel {
     return data;
   }
 }
+
+class PrinterFormModel {
+  String? id;
+  String? name;
+  String? connection;
+  String? description;
+  String? isActive;
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (id != null) data['id'] = id;
+    if (name != null) data['name'] = name;
+    if (connection != null) data['connection'] = connection;
+    if (description != null) data['description'] = description;
+    if (isActive != null) data['is_active'] = isActive;
+    return data;
+  }
+}

@@ -7,6 +7,7 @@ import 'package:pos/screens/area.dart';
 import 'package:pos/screens/classification.dart';
 import 'package:pos/screens/discount.dart';
 import 'package:pos/screens/payment_method.dart';
+import 'package:pos/screens/printer.dart';
 import 'package:pos/screens/product.dart';
 import 'package:pos/screens/table.dart';
 import 'package:pos/screens/user.dart';
@@ -35,6 +36,8 @@ class StartScreen extends StatelessWidget {
         return DiscountWidget();
       case 'Payment Methods':
         return PaymentMethodWidget();
+      case 'Printers':
+        return PrinterWidget();
       case 'Products':
         return ProductWidget();
       case 'Users':
@@ -124,6 +127,13 @@ class StartScreen extends StatelessWidget {
                     onTap: () {
                       // Update UI based on item selection
                       widget.value = 'Payment Methods';
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Printers'),
+                    onTap: () {
+                      // Update UI based on item selection
+                      widget.value = 'Printers';
                     },
                   ),
                   ListTile(
