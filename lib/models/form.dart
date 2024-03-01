@@ -28,6 +28,7 @@ class AccountFormModel {
   String? ownerName;
   String? email;
   String? contactNumber;
+  String? accountType;
   String? address;
   bool? status;
 
@@ -36,6 +37,7 @@ class AccountFormModel {
     if (id != null) data['id'] = id!;
     if (name != null) data['name'] = name!;
     if (ownerName != null) data['ownerName'] = ownerName!;
+    if (accountType != null) data['account_type'] = accountType!;
     if (email != null) data['email'] = email!;
     if (contactNumber != null) data['contactNumber'] = contactNumber!;
     if (address != null) data['address'] = address!;

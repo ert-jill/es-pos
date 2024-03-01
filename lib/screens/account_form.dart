@@ -16,6 +16,7 @@ class AccountForm extends StatelessWidget {
   RxBool isLoading = false.obs;
   RxBool isSubmitting = false.obs;
   RxBool _shouldValidate = true.obs;
+  RxList<AccountType> accountTypeList = RxList.empty();
 
   TextEditingController _nameFieldController = TextEditingController();
   TextEditingController _ownerFieldController = TextEditingController();
@@ -60,8 +61,14 @@ class AccountForm extends StatelessWidget {
     _shouldValidate.value = false;
   }
 
+  onInit() async {
+    accountTypeList.value = await accountController.getAccountTypes();
+    accountTypeList.refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
+    onInit();
     return SizedBox(
       width: 800,
       height: 525,
@@ -271,6 +278,73 @@ class AccountForm extends StatelessWidget {
                                                     Expanded(
                                                       child: Column(
                                                         children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        16),
+                                                            child: LayoutBuilder(
+                                                                builder: (context,
+                                                                    constraints) {
+                                                              return SizedBox(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  child: Obx(() =>
+                                                                      DropdownButtonFormField<
+                                                                          AccountType>(
+                                                                        autovalidateMode:
+                                                                            AutovalidateMode.onUserInteraction,
+                                                                        decoration:
+                                                                            const InputDecoration(
+                                                                          labelText:
+                                                                              'Account Type',
+                                                                          border:
+                                                                              OutlineInputBorder(),
+                                                                        ),
+                                                                        validator:
+                                                                            (value) {
+                                                                          if (value ==
+                                                                              null) {
+                                                                            return 'Please select account type';
+                                                                          }
+                                                                          return null;
+                                                                        },
+                                                                        onSaved:
+                                                                            (newValue) {
+                                                                          accountFormModel.accountType = newValue!
+                                                                              .id
+                                                                              .toString();
+                                                                        },
+                                                                        items: accountTypeList.map<
+                                                                            DropdownMenuItem<
+                                                                                AccountType>>((AccountType
+                                                                            accountType) {
+                                                                          return DropdownMenuItem<
+                                                                              AccountType>(
+                                                                            value:
+                                                                                accountType,
+                                                                            child:
+                                                                                Text(accountType.name),
+                                                                            // label: accountType.name,
+                                                                            // enabled: accountType.isActive,
+                                                                            // style: MenuItemButton.styleFrom(
+                                                                            //   foregroundColor: color.color,
+                                                                            // ),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged:
+                                                                            (AccountType?
+                                                                                value) {},
+                                                                        // onChanged: null,r
+                                                                        onTap: isLoading.value
+                                                                            ? () {}
+                                                                            : null,
+                                                                      )));
+                                                            }),
+                                                          ),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets

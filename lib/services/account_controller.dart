@@ -34,4 +34,16 @@ class AccountController extends GetxController {
       rethrow; // Rethrow the exception for further handling, if needed
     }
   }
+
+  getAccountTypes() async {
+    var response = await httpService.getRequest('accounts/get_account_type/');
+    if (response.isOk) {
+      final List<dynamic> jsonList = jsonDecode(response.bodyString ?? '');
+      List<AccountType> accountTypeList =
+          jsonList.map((json) => AccountType.fromJson(json)).toList();
+      return accountTypeList;
+    } else {
+      return [];
+    }
+  }
 }
