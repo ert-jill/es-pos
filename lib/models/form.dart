@@ -71,7 +71,7 @@ class ClassificationFormModel {
     if (id != null) data['id'] = id!;
     if (name != null) data['name'] = name!;
     if (description != null) data['description'] = description!;
-    if (description != null) data['parent'] = parent!;
+    if (parent != null) data['parent'] = parent!;
 
     return data;
   }
@@ -177,6 +177,8 @@ class TableFormModel {
   String? code;
   String? area;
   String? isActive;
+  String? top;
+  String? left;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
@@ -184,6 +186,8 @@ class TableFormModel {
     if (name != null) data['name'] = name;
     if (code != null) data['code'] = code;
     if (area != null) data['area'] = area;
+    if (top != null) data['top'] = top;
+    if (left != null) data['left'] = left;
     return data;
   }
 }
@@ -202,6 +206,36 @@ class PrinterFormModel {
     if (connection != null) data['connection'] = connection;
     if (description != null) data['description'] = description;
     if (isActive != null) data['is_active'] = isActive;
+    return data;
+  }
+}
+
+class TransactionFormModel {
+  String? id;
+  String? table;
+  String? customer;
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (id != null) data['id'] = id;
+    if (table != null) data['table'] = table;
+    if (customer != null) data['customer'] = customer;
+
+    return data;
+  }
+}
+
+class OrderFormModel {
+  String? id;
+  String? tables;
+  String? customer;
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (id != null) data['id'] = id;
+    if (tables != null) data['tables'] = tables;
+    if (customer != null) data['customer'] = customer;
+
     return data;
   }
 }

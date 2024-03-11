@@ -39,12 +39,12 @@ class TableList extends StatelessWidget {
                         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                         onTap: () {},
                         isThreeLine: true,
-                        subtitle:
-                            Text('${tableController.tableList[index].code}'),
+                        subtitle: Text(
+                            '${tableController.tableList[index].value.code}'),
                         trailing: Text(
-                            '${tableController.tableList[index].isActive}'),
+                            '${tableController.tableList[index].value.isActive}'),
                         title: Text(
-                            '${tableController.tableList[index].name ?? ''}'),
+                            '${tableController.tableList[index].value.name ?? ''}'),
                       ),
                     ),
                     Divider()

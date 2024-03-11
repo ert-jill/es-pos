@@ -42,7 +42,7 @@ class HttpService extends GetConnect {
 
   // Function for making a PUT request
   Future<Response> putRequest(String endpoint, dynamic data) async {
-    return await put('$baseUrl/$endpoint', data, headers: headers);
+    return await put(endpoint, data, headers: headers);
   }
 
   // Future<Response> postRequest(String uri, dynamic body) async {

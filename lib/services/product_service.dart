@@ -25,10 +25,10 @@ class ProductService extends GetxService {
     productList.refresh();
   }
 
-  searchProducts(String? stringSearch) async {
-    var response = await httpService.getRequest(stringSearch == null
-        ? 'products/'
-        : 'products/?product_name=$stringSearch');
+  Future<List<Product>> searchProducts(
+      String? stringSearch, String? classification, String? page) async {
+    var response = await httpService.getRequest(
+        'products/${stringSearch != null || page != null || classification != null ? '?' : ''}${page != null ? 'page=' + page : ''}${page != null && (stringSearch != null || classification != null) ? '&' : ''}${stringSearch != null ? 'product_name=' + stringSearch : ''}${stringSearch != null && page != null && classification != null ? '&' : ''}${classification != null ? 'classification=' + classification : ''}');
 
     final List<dynamic> jsonList =
         jsonDecode(jsonEncode(response.body['results']) ?? '');

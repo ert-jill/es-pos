@@ -10,7 +10,6 @@ class ClassificationForm extends StatelessWidget {
   ClassificationFormModel classificationFormModel = ClassificationFormModel();
   ClassificationController classificationController;
 
-  String? _password;
   RxBool isLoading = false.obs;
   RxBool isSubmitting = false.obs;
   Rx<Classification?> selectedClassification = Rx(null);
@@ -22,9 +21,11 @@ class ClassificationForm extends StatelessWidget {
   final classificationFormKey = GlobalKey<FormState>();
 
   submit() async {
-    // print(classificationFormModel.toJson().toString());
+    print(classificationFormModel.toJson()?.toString());
     if (classificationFormKey.currentState!.validate()) {
       classificationFormKey.currentState!.save();
+      print(classificationFormModel.toJson().toString());
+
       isSubmitting.value = true;
       try {
         var response = await classificationController
@@ -32,8 +33,6 @@ class ClassificationForm extends StatelessWidget {
         if (response.isOk) {
           classificationFormKey.currentState!.reset();
           clearAllTextControllers();
-        } else {
-          //   print('failed not ok');
         }
       } catch (e) {
         SnackBarService.presentSnackBar('Error', e.toString(), AlertType.error);
@@ -239,11 +238,13 @@ class ClassificationForm extends StatelessWidget {
                                                                         ),
                                                                         onSaved:
                                                                             (newValue) {
-                                                                          selectedClassification.value =
-                                                                              newValue;
-                                                                          this.classificationFormModel.parent = newValue!
-                                                                              .id
-                                                                              .toString();
+                                                                          // if (newValue !=
+                                                                          //     null) {
+                                                                          //   selectedClassification.value =
+                                                                          //       newValue;
+                                                                          //   this.classificationFormModel.parent =
+                                                                          //       newValue.id.toString();
+                                                                          // }
                                                                         },
                                                                         items: classificationController
                                                                             .classificationList

@@ -92,8 +92,8 @@ class ProductForm extends StatelessWidget {
   addController() {
     _controllerList.add(TextEditingController());
     _controllerList[_controllerList.length - 1].addListener(() async {
-      dropDownProducts.value = await productService
-          .searchProducts(_controllerList[_controllerList.length - 1].text);
+      dropDownProducts.value = await productService.searchProducts(
+          _controllerList[_controllerList.length - 1].text, null, null);
       dropDownProducts.refresh();
     });
   }

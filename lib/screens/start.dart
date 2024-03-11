@@ -14,17 +14,18 @@ import 'package:pos/services/user_service.dart';
 import '../services/auth_service.dart';
 import '../services/timer.dart';
 import 'account.dart';
+import 'cash_registry.dart';
 
 class StartScreen extends StatelessWidget {
   final TimeController timeController = Get.put(TimeController());
   final AuthService authService = Get.find<AuthService>();
   final UserService userService = Get.find<UserService>();
-  RxString widget = 'Menu'.obs;
+  RxString widget = 'Cash Registry'.obs;
 
   getWidget() {
     switch (widget.value) {
-      case 'Menu':
-        return Menu();
+      case 'Cash Registry':
+        return CashRegistryWidget();
       case 'Account':
         return AccountWidget();
       case 'Areas':
@@ -46,7 +47,7 @@ class StartScreen extends StatelessWidget {
       case 'Tables':
         return TableWidget();
       default:
-        return Menu();
+        return CashRegistryWidget();
     }
   }
 
@@ -81,10 +82,10 @@ class StartScreen extends StatelessWidget {
                     ),
                   ),
                   ListTile(
-                    title: Text('Menu'),
+                    title: Text('Cash Registry'),
                     onTap: () {
                       // Update UI based on item selection
-                      widget.value = 'Menu';
+                      widget.value = 'Cash Registry';
                       Navigator.of(context).pop();
                     },
                   ),
@@ -98,7 +99,7 @@ class StartScreen extends StatelessWidget {
                     title: Text('Genartare'),
                     onTap: () {
                       // Update UI based on item selection
-                      // widget.value = 'Menu';
+                      // widget.value = 'Cash Registry';
                     },
                   ),
                   Divider(),
@@ -200,55 +201,5 @@ class StartScreen extends StatelessWidget {
           ],
         )),
         body: Obx(() => getWidget()));
-  }
-}
-
-class Menu extends StatelessWidget {
-  const Menu({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 700,
-        child: GridView.count(
-          crossAxisCount: 2, // Number of columns
-          children: <Widget>[
-            Card(
-              margin: EdgeInsets.all(10),
-              child: InkWell(
-                onTap: () {
-                  // Handle button tap
-                  print('Button tapped');
-                },
-                child: Center(
-                  child: Text(
-                    'title',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
-            ),
-            Card(
-              margin: EdgeInsets.all(10),
-              child: InkWell(
-                onTap: () {
-                  // Handle button tap
-                  print('Button tapped');
-                },
-                child: Center(
-                  child: Text(
-                    'title',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

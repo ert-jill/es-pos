@@ -42,6 +42,7 @@ class AuthService extends GetxService {
 
   Future<void> logout() async {
     // Perform logout logic
+    httpService.headers.remove('Authorization');
     await storageService.deleteAll();
     var acc = await storageService.get(AuthConstant.user);
     print('out $acc');

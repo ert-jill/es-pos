@@ -14,7 +14,7 @@ class ClassificationList extends StatelessWidget {
 
   onInit() async {
     isLoading.value = true;
-    await classificationController.getAccountList();
+    await classificationController.getClassificationList(null, null);
     isLoading.value = false;
   }
 

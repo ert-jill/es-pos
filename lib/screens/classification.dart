@@ -26,7 +26,7 @@ class ClassificationWidget extends StatelessWidget {
           actions: [
             IconButton(
                 onPressed: () {
-                  classificationController.getAccountList();
+                  classificationController.getClassificationList(null, null);
                 },
                 icon: Icon(Icons.refresh)),
             SizedBox(

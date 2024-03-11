@@ -10,8 +10,9 @@ class ClassificationController extends GetxController {
 
   RxList<Classification> classificationList = RxList.empty();
 
-  getAccountList() async {
-    var response = await httpService.getRequest('classifications/');
+  getClassificationList(String? parent, String? depth) async {
+    var response = await httpService.getRequest(
+        'classifications/${parent != null ? '?parent=$parent' : ''}${depth != null ? '?depth=$depth' : ''}');
     if (response.isOk) {
       final List<dynamic> jsonList = jsonDecode(response.bodyString ?? '');
       List<Classification> classificationListFromJson =
@@ -23,13 +24,26 @@ class ClassificationController extends GetxController {
     classificationList.refresh();
   }
 
+  getClassificationList1(String? parent, String? depth) async {
+    var response = await httpService.getRequest(
+        'classifications/${parent != null || depth != null ? '?' : ''}${parent != null ? 'parent=$parent' : ''}${depth != null && parent != null ? '&' : ''}${depth != null ? 'depth=$depth' : ''}');
+    if (response.isOk) {
+      final List<dynamic> jsonList = jsonDecode(response.bodyString ?? '');
+      List<Classification> classificationListFromJson =
+          jsonList.map((json) => Classification.fromJson(json)).toList();
+      classificationList.value = classificationListFromJson;
+      return classificationListFromJson;
+    }
+    return [];
+  }
+
   Future<Response> addClassification(
       ClassificationFormModel classificationFormModel) async {
     try {
       final response = await httpService.postRequest(
           'classifications/', classificationFormModel.toJson());
       if (response.isOk) {
-        getAccountList();
+        getClassificationList(null, null);
       }
       return response;
     } catch (e) {
