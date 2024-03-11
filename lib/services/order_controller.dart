@@ -63,29 +63,19 @@ class OrderController extends GetxController {
   addOrderItem(BigInt order_id, Product product, int quantity) async {
     int foundOrder =
         orderItems.indexWhere((obj) => obj.value.sku == product.sku);
-    if (foundOrder != -1) {
-      // OrderItem? order = await setProductQuantity(orderItems[foundOrder].id,quantity);
-      // if (order != null) {
-      //   orderItems[foundOrder].quantity = order.quantity;
-      //   orderItems[foundOrder].productTotal = order.productTotal;
-      //   orderItems.refresh();
-      // }
+    if (foundOrder > -1) {
+      addItemQuantity(order_id, product.sku);
     } else {
-      // OrderItem? orderItem =
-      //     await setProductQuantity(orderItems[foundOrder].id, quantity);
-      // if (orderItem != null) {
-      //   orderItems.add(orderItem);
-      //   orderItems.refresh();
-      // }
-      // OrderItem orderItem = OrderItem(
-      //     id: BigInt.from(0),
-      //     sku: product.sku,
-      //     order: order_id,
-      //     product: product,
-      //     quantity: 1,
-      //     productTotal: (double.parse(product.price) * 1).toString(),
-      //     productDiscount: 0.00.toString(),
-      //     isVoid: false);
+      OrderItemFormModel orderItemFormModel = OrderItemFormModel();
+      orderItemFormModel.order = order_id.toString();
+      orderItemFormModel.sku = product.sku;
+      orderItemFormModel.quantity = quantity.toString();
+      OrderItem? orderItem = await addOrderItemRequest(orderItemFormModel);
+
+      if (orderItem != null) {
+        orderItems.add(orderItem.obs);
+        orderItems.refresh();
+      }
     }
   }
 
@@ -140,11 +130,29 @@ class OrderController extends GetxController {
     }
   }
 
+  // /orders/add_order_item/
   Future<Response> createOrder(OrderFormModel orderFormModel) async {
     try {
       final response =
           await httpService.postRequest('orders/', orderFormModel.toJson());
       return response;
+    } catch (e) {
+      // Handle exceptions or errors here
+      print('Exception occurred: $e');
+      rethrow; // Rethrow the exception for further handling, if needed
+    }
+  }
+
+  Future<OrderItem?> addOrderItemRequest(
+      OrderItemFormModel orderItemFormModel) async {
+    try {
+      final response = await httpService.postRequest(
+          'orders/add_order_item/', orderItemFormModel.toJson());
+      if (response.isOk) {
+        return OrderItem.fromJson(response.body);
+      } else {
+        return null;
+      }
     } catch (e) {
       // Handle exceptions or errors here
       print('Exception occurred: $e');

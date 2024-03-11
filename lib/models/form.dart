@@ -239,3 +239,18 @@ class OrderFormModel {
     return data;
   }
 }
+
+class OrderItemFormModel {
+  String? order;
+  String? quantity;
+  String? sku;
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (order != null) data['order'] = order;
+    if (quantity != null) data['quantity'] = quantity;
+    if (sku != null) data['sku'] = sku;
+
+    return data;
+  }
+}
