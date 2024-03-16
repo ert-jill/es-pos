@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../services/cash_registry_service.dart';
+import '../services/timer.dart';
 
 class CashRegistryWidget extends StatelessWidget {
   CashRegistryService cashRegistryService = Get.put(CashRegistryService());

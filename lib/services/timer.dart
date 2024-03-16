@@ -13,8 +13,8 @@ class TimeController extends GetxController {
 
   void _updateTime() {
     Timer.periodic(Duration(seconds: 1), (timer) {
-      currentTime.value = DateFormat('hh:mm:ss a')
-          .format(DateTime.now()); // Update current time
+      currentTime.value =
+          DateFormat('hh:mm a').format(DateTime.now()); // Update current time
     });
   }
 }

@@ -195,10 +195,6 @@ class OrderWidget extends StatelessWidget {
                                       crossAxisCount: 4),
                               itemBuilder: (context, i) => Card(
                                     child: Obx(() {
-                                      int index = cashRegistryService
-                                          .orderController
-                                          .indexOfProductInOrder(
-                                              products[i].sku);
                                       return InkWell(
                                         onTap: () {
                                           cashRegistryService.orderController
@@ -213,7 +209,12 @@ class OrderWidget extends StatelessWidget {
                                                   child:
                                                       Text(products[i].name)),
                                               Spacer(),
-                                              if (index > -1)
+
+                                              if (cashRegistryService
+                                                  .orderController.orderItems
+                                                  .any((element) =>
+                                                      element.value.sku ==
+                                                      products[i].sku))
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -231,15 +232,6 @@ class OrderWidget extends StatelessWidget {
                                                                 .id,
                                                             products[i].sku,
                                                           );
-                                                          print(
-                                                              products[i].sku);
-                                                          print(
-                                                              index.toString());
-                                                          print(cashRegistryService
-                                                              .orderController
-                                                              .orderItems[index]
-                                                              .value
-                                                              .id);
                                                         },
                                                         icon:
                                                             Icon(Icons.remove)),
@@ -259,6 +251,7 @@ class OrderWidget extends StatelessWidget {
                                                         icon: Icon(Icons.add)),
                                                   ],
                                                 )
+
                                               // else
                                               //   ElevatedButton(
                                               //       onPressed: () {
@@ -279,28 +272,6 @@ class OrderWidget extends StatelessWidget {
                   width: 400,
                   child: Column(
                     children: [
-                      Obx(() => (order.value?.tables != null)
-                          ? Container(
-                              height: 50,
-                              width: double.infinity,
-                              child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: ListTile(
-                                    title: Text(
-                                        'Table(s) : ${order.value!.tables}'),
-                                  )),
-                            )
-                          : Container(
-                              height: 50,
-                              width: double.infinity,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: ListTile(
-                                  title: Text(
-                                      'Order No : ${order.value?.id.toString()}'),
-                                ),
-                              ),
-                            )),
                       Expanded(
                           child: Obx(() => ListView.builder(
                                 itemCount: cashRegistryService
@@ -345,26 +316,17 @@ class OrderWidget extends StatelessWidget {
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Sub Total'),
-                                    Text('${order.value?.total}')
-                                  ],
+                                  children: [Text('Sub Total'), Text('')],
                                 ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Total VAT'),
-                                    Text('${order.value?.total}')
-                                  ],
+                                  children: [Text('Total VAT'), Text('')],
                                 ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Payable Amount'),
-                                    Text('${order.value?.total}')
-                                  ],
+                                  children: [Text('Payable Amount'), Text('')],
                                 ),
                                 Container(
                                     padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
