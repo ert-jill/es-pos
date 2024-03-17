@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos/screens/dine.dart';
 
+import '../models/order.dart';
 import '../services/cash_registry_service.dart';
 
 enum MenuModule { search, dineIn, takeOut, deliver }
@@ -18,76 +19,12 @@ class Menu extends StatelessWidget {
       case MenuModule.search:
         return getSearchWidget();
       case MenuModule.takeOut:
-        return getTakeOutWidget();
+        return ToGoWidget();
       case MenuModule.dineIn:
         return DineWidget();
       default:
         return getSearchWidget();
     }
-  }
-
-  Column getTakeOutWidget() {
-    return Column(
-      children: [
-        // Container(
-        //   color: Colors.white,
-        //   child: Padding(
-        //     padding:
-        //         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        //     child: TextFormField(
-        //       maxLength: 200,
-        //       onFieldSubmitted: (text) {},
-        //       decoration: const InputDecoration(
-        //           counterText: '',
-        //           border: OutlineInputBorder(),
-        //           labelText: "Search Order"),
-        //       validator: (value) {
-        //         if (value == null || value.isEmpty) {
-        //           return 'Please enter name';
-        //         }
-        //         return null;
-        //       },
-        //       onSaved: (newValue) {},
-        //     ),
-        //   ),
-        // ),
-        Expanded(
-            child: GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, childAspectRatio: 1.5),
-          children: [
-            Card(
-              color: Colors.blueGrey,
-              child: Center(child: Text('Add New')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-          ],
-        ))
-      ],
-    );
   }
 
   Column getSearchWidget() {
@@ -115,38 +52,15 @@ class Menu extends StatelessWidget {
           ),
         ),
         Expanded(
-            child: GridView(
+            child: GridView.builder(
+          itemCount: 4,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4, childAspectRatio: 1.5),
-          children: [
-            Card(
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
               child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-            Card(
-              child: Center(child: Text('found')),
-            ),
-          ],
+            );
+          },
         ))
       ],
     );
@@ -249,6 +163,59 @@ class Menu extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class ToGoWidget extends StatelessWidget {
+  CashRegistryService cashRegistryService = Get.find<CashRegistryService>();
+  ToGoWidget({
+    super.key,
+  });
+  RxList<Order> orders = RxList.empty();
+  getOrders() async {
+    orders.value = await cashRegistryService.orderController.getOrders('to_go');
+    // orders.refresh();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    getOrders();
+    return Column(
+      children: [
+        Expanded(
+            child: Obx(() => GridView.builder(
+                  itemCount: orders.length + 1,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4, childAspectRatio: 1.5),
+                  itemBuilder: (BuildContext context, int index) {
+                    return index == 0
+                        ? InkWell(
+                            onTap: () {
+                              cashRegistryService
+                                  .navigateTo(CashRegistryModule.order);
+                            },
+                            child: Card(
+                              color: Colors.red,
+                              child: Center(child: Text('Add New')),
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              cashRegistryService.orderController
+                                  .selectOrder(orders[index - 1].id);
+                              cashRegistryService
+                                  .navigateTo(CashRegistryModule.order);
+                            },
+                            child: Card(
+                              child: Center(
+                                  child: Text('${orders[index - 1].id}'
+                                      .padLeft(8, '0'))),
+                            ),
+                          );
+                  },
+                )))
+      ],
     );
   }
 }

@@ -16,7 +16,7 @@ class OrderController extends GetxController {
 
   selectOrder(BigInt orderId) async {
     selectedOrder.value = await getOrder(orderId);
-    orderItems.value = await getOrderItems(orderId);
+    // orderItems.value = await getOrderItems(orderId);
   }
 
   Future<Order?> getOrder(BigInt id) async {
@@ -120,6 +120,18 @@ class OrderController extends GetxController {
 
   Future<List<Order>> getOrderList() async {
     var response = await httpService.getRequest('orders/');
+    if (response.isOk) {
+      final List<dynamic> jsonList = jsonDecode(response.bodyString ?? '');
+      List<Order> userListFromJson =
+          jsonList.map((json) => Order.fromJson(json)).toList();
+      return userListFromJson;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<Order>> getOrders(String by) async {
+    var response = await httpService.getRequest('orders/?by=$by');
     if (response.isOk) {
       final List<dynamic> jsonList = jsonDecode(response.bodyString ?? '');
       List<Order> userListFromJson =
