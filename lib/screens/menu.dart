@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pos/models/form.dart';
 import 'package:pos/screens/dine.dart';
 
 import '../models/order.dart';
@@ -178,6 +179,18 @@ class ToGoWidget extends StatelessWidget {
     // orders.refresh();
   }
 
+  addNewOrder() async {
+    OrderFormModel orderFormModel = OrderFormModel();
+    orderFormModel.customer = '';
+    Response res =
+        await cashRegistryService.orderController.createOrder(orderFormModel);
+    if (res.isOk) {
+      Order newAddedOrder = Order.fromJson(res.body);
+      cashRegistryService.orderController.selectOrder(newAddedOrder.id);
+      cashRegistryService.navigateTo(CashRegistryModule.order);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     getOrders();
@@ -192,8 +205,7 @@ class ToGoWidget extends StatelessWidget {
                     return index == 0
                         ? InkWell(
                             onTap: () {
-                              cashRegistryService
-                                  .navigateTo(CashRegistryModule.order);
+                              addNewOrder();
                             },
                             child: Card(
                               color: Colors.red,

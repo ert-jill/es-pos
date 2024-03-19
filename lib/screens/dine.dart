@@ -143,7 +143,7 @@ class AreaTableWidget extends StatelessWidget {
     // print('${table.left.value} - ${table.top.value}');
   }
 
-  makeAnOrder(String tables) async {
+  makeAnOrder(String table) async {
     Map<String, dynamic>? result = await Get.dialog<Map<String, dynamic>>(
       ConfirmationDialog(),
       barrierDismissible: false,
@@ -153,7 +153,7 @@ class AreaTableWidget extends StatelessWidget {
       String customerName = result['customer'];
       OrderFormModel orderFormModel = OrderFormModel();
       orderFormModel.customer = customerName;
-      orderFormModel.tables = tables;
+      orderFormModel.table = table;
       Response response =
           await cashRegistryService.orderController.createOrder(orderFormModel);
       if (response.isOk) {

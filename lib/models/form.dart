@@ -227,13 +227,13 @@ class TransactionFormModel {
 
 class OrderFormModel {
   String? id;
-  String? tables;
+  String? table;
   String? customer;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (id != null) data['id'] = id;
-    if (tables != null) data['tables'] = tables;
+    if (table != null) data['table'] = table;
     if (customer != null) data['customer'] = customer;
 
     return data;
