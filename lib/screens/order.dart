@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:pos/models/classification.dart';
 import 'package:pos/models/product.dart';
 
@@ -26,6 +27,7 @@ class OrderWidget extends StatelessWidget {
 
   Rx<String> selectedMainClassification = ''.obs;
   Rx<String> selectedSubClassification = ''.obs;
+  Rx<DateTime> currentDate = DateTime.now().obs;
 
   onInit() async {
     mainClassification.value =
@@ -215,6 +217,16 @@ class OrderWidget extends StatelessWidget {
                                                   onTap: () {
                                                     selectedProduct.value =
                                                         products[i];
+                                                    cashRegistryService
+                                                        .orderController
+                                                        .addOrderItem(
+                                                            cashRegistryService
+                                                                .orderController
+                                                                .selectedOrder
+                                                                .value!
+                                                                .id,
+                                                            products[i],
+                                                            1);
                                                   },
                                                   child: Container(
                                                     color: Colors.green,
@@ -289,7 +301,14 @@ class OrderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Obx(() => Text(
-                                  'Order # ' +
+                                  'Date : ' +
+                                      '${DateFormat('MMM dd, yyyy').format(currentDate.value)}',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                )),
+                            Obx(() => Text(
+                                  'Order # : ' +
                                       '${cashRegistryService.orderController.selectedOrder.value?.id.toString().padLeft(8, '0')}',
                                   style: TextStyle(
                                       fontSize: 16,
@@ -301,15 +320,78 @@ class OrderWidget extends StatelessWidget {
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500),
                                 )),
+                            Expanded(
+                              child: Obx(() => ListView.builder(
+                                    itemCount: cashRegistryService
+                                        .orderController.orderItems.length,
+                                    padding: EdgeInsets.all(10),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return ListTile(
+                                        onTap: () {},
+                                        leading:
+                                            Icon(Icons.check_box_outline_blank),
+                                        title: Text(cashRegistryService
+                                            .orderController
+                                            .orderItems[index]
+                                            .value
+                                            .product
+                                            .name),
+                                        subtitle: Obx(() => Text(
+                                            'Quantity: ${cashRegistryService.orderController.orderItems[index].value.quantity}')),
+                                        trailing: Text((double.parse(
+                                                    cashRegistryService
+                                                        .orderController
+                                                        .orderItems[index]
+                                                        .value
+                                                        .product
+                                                        .price) *
+                                                cashRegistryService
+                                                    .orderController
+                                                    .orderItems[index]
+                                                    .value
+                                                    .quantity)
+                                            .toStringAsFixed(2)),
+                                      );
+                                    },
+                                  )),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              height: 120,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Obx(() => Text(
+                                        'Sub Total ₱ ${cashRegistryService.orderController.selectedOrder.value?.totalAmount.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                  Obx(() => Text(
+                                        'VAT Amount ₱ ${cashRegistryService.orderController.selectedOrder.value?.totalVat.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                  Obx(() => Text(
+                                        'Total Discount ₱ ${cashRegistryService.orderController.selectedOrder.value?.totalDiscount.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                  Obx(() => Text(
+                                        'Total ₱ ${cashRegistryService.orderController.selectedOrder.value?.totalAmount.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       )),
-                      // Container(
-                      //   padding: EdgeInsets.all(10),
-                      //   height: 150,
-                      //   width: double.infinity,
-                      //   color: Colors.orange,
-                      // ),
                       Container(
                         color: Colors.black,
                         width: double.infinity,

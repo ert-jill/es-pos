@@ -197,36 +197,71 @@ class ToGoWidget extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-            child: Obx(() => GridView.builder(
-                  itemCount: orders.length + 1,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4, childAspectRatio: 1.5),
-                  itemBuilder: (BuildContext context, int index) {
-                    return index == 0
-                        ? InkWell(
-                            onTap: () {
-                              addNewOrder();
-                            },
-                            child: Card(
-                              color: Colors.red,
-                              child: Center(child: Text('Add New')),
-                            ),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              cashRegistryService.orderController
-                                  .selectOrder(orders[index - 1].id);
-                              cashRegistryService
-                                  .navigateTo(CashRegistryModule.order);
-                            },
-                            child: Card(
-                              child: Center(
-                                  child: Text('${orders[index - 1].id}'
-                                      .padLeft(8, '0'))),
-                            ),
-                          );
-                  },
-                )))
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Obx(() => GridView.builder(
+                itemCount: orders.length + 1,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    childAspectRatio: 1.5,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8),
+                itemBuilder: (BuildContext context, int index) {
+                  return index == 0
+                      ? InkWell(
+                          onTap: () {
+                            addNewOrder();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            color: Colors.red,
+                            child: Center(
+                                child: Text(
+                              'Add New',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () {
+                            cashRegistryService.orderController
+                                .selectOrder(orders[index - 1].id);
+                            cashRegistryService
+                                .navigateTo(CashRegistryModule.order);
+                          },
+                          child: Container(
+                              padding: EdgeInsets.all(8),
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Obx(() => Text(
+                                        'Order # ${orders[index - 1].id.toString().padLeft(8, '0')}'
+                                            .padLeft(8, '0'),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  Obx(() => Text(
+                                        'Customer : ${orders[index - 1].customer}'
+                                            .padLeft(8, '0'),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                  Obx(() => Text(
+                                        'Status :  ${orders[index - 1].status}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                ],
+                              )),
+                        );
+                },
+              )),
+        ))
       ],
     );
   }
