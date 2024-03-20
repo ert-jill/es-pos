@@ -126,26 +126,62 @@ class CashRegistryService extends GetxService {
               rows: const <DataRow>[
                 DataRow(
                   cells: <DataCell>[
-                    DataCell(Text('Sarah')),
-                    DataCell(Text('19')),
-                    DataCell(Text('Student')),
-                    DataCell(Text('Professor')),
+                    DataCell(Text(
+                      'Cashier',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '10/12/20\n4:10 PM',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '10/12/20\n4:10 PM',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '8:00',
+                      textAlign: TextAlign.center,
+                    )),
                   ],
                 ),
                 DataRow(
                   cells: <DataCell>[
-                    DataCell(Text('Janine')),
-                    DataCell(Text('43')),
-                    DataCell(Text('Professor')),
-                    DataCell(Text('Professor')),
+                    DataCell(Text(
+                      'Cashier',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '10/12/20\n4:10 PM',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '10/12/20\n4:10 PM',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '8:00',
+                      textAlign: TextAlign.center,
+                    )),
                   ],
                 ),
                 DataRow(
                   cells: <DataCell>[
-                    DataCell(Text('William')),
-                    DataCell(Text('27')),
-                    DataCell(Text('Associate Professor')),
-                    DataCell(Text('Professor')),
+                    DataCell(Text(
+                      'Cashier',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '10/12/20\n4:10 PM',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '10/12/20\n4:10 PM',
+                      textAlign: TextAlign.center,
+                    )),
+                    DataCell(Text(
+                      '8:00',
+                      textAlign: TextAlign.center,
+                    )),
                   ],
                 ),
               ],

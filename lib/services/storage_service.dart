@@ -5,19 +5,19 @@ class StorageService extends GetxService {
   final storage = const FlutterSecureStorage();
   StorageService();
 
-// Read value
+  //Read value
   Future<String?> get(String key) async {
     String? value = await storage.read(key: key);
     return value;
   }
 
-// Read all values
+  //Read all values
   Future<Map<String, String>?> getAllValues() async {
     var value = await storage.readAll();
     return value;
   }
 
-// Delete value
+  //Delete value
   deleteValue(String key) async {
     await storage.delete(key: key);
   }
@@ -25,10 +25,10 @@ class StorageService extends GetxService {
   deleteAll() async {
     await storage.deleteAll();
   }
-// Delete all
 
+  //Delete all
   set(String key, dynamic value) async {
     await storage.write(key: key, value: value.toString());
   }
-// Write value
+  // Write value
 }

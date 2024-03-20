@@ -22,6 +22,7 @@ class OrderWidget extends StatelessWidget {
   RxList<Classification> mainClassification = RxList.empty();
   RxList<Classification> subClassification = RxList.empty();
   RxList<Product> products = RxList.empty();
+  Rx<Product?> selectedProduct = Rx(null); // flag if has selected a product
 
   Rx<String> selectedMainClassification = ''.obs;
   Rx<String> selectedSubClassification = ''.obs;
@@ -70,413 +71,270 @@ class OrderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     onInit();
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
+        body: Column(
+      children: [
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black,
             child: Row(
               children: [
-                Container(
-                  width: 250,
-                  // color: Colors.blue,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Category'),
-                      ),
-                      Expanded(
-                          child: Obx(() => ListView.builder(
-                              padding: EdgeInsetsDirectional.all(8),
-                              itemCount: mainClassification.length + 1,
-                              itemBuilder: (context, i) {
-                                return Obx(() => Card(
-                                    color: selectedMainClassification.value ==
-                                            (i == 0
-                                                ? ''
-                                                : mainClassification[i - 1]
-                                                    .id
-                                                    .toString())
-                                        ? Colors.green
-                                        : null,
-                                    child: InkWell(
-                                        onTap: () {
-                                          selectMainClassification(i == 0
-                                              ? ''
-                                              : mainClassification[i - 1]
-                                                  .id
-                                                  .toString());
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Center(
-                                            child: Text(i == 0
-                                                ? 'All'
-                                                : mainClassification[i - 1]
-                                                    .name),
-                                          ),
-                                        ))));
-                              })))
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: Column(
                     children: [
+                      Expanded(
+                          child: Obx(() => selectedProduct.value == null
+                              ? Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      height: double.infinity,
+                                      width: 180,
+                                      color: Colors.black,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            height: 70,
+                                            width: double.infinity,
+                                          ),
+                                          Expanded(
+                                            child: Obx(() => ListView.builder(
+                                                itemCount:
+                                                    mainClassification.length +
+                                                        1,
+                                                itemBuilder: (context, i) {
+                                                  return Obx(() => Container(
+                                                      color: selectedMainClassification
+                                                                  .value ==
+                                                              (i == 0
+                                                                  ? ''
+                                                                  : mainClassification[
+                                                                          i - 1]
+                                                                      .id
+                                                                      .toString())
+                                                          ? Colors.green
+                                                          : Color.fromARGB(255,
+                                                              148, 148, 150),
+                                                      child: InkWell(
+                                                          onTap: () {
+                                                            selectMainClassification(i ==
+                                                                    0
+                                                                ? ''
+                                                                : mainClassification[
+                                                                        i - 1]
+                                                                    .id
+                                                                    .toString());
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(20.0),
+                                                            child: Center(
+                                                              child: Text(i == 0
+                                                                  ? 'All'
+                                                                  : mainClassification[
+                                                                          i - 1]
+                                                                      .name),
+                                                            ),
+                                                          ))));
+                                                })),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          color: Colors.yellow,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 8, 8, 8),
+                                                color: Colors.black,
+                                                width: double.infinity,
+                                                height: 78,
+                                                child: Obx(() =>
+                                                    ListView.builder(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount:
+                                                            subClassification
+                                                                    .length +
+                                                                1,
+                                                        itemBuilder:
+                                                            (context, i) {
+                                                          return Obx(
+                                                              () => Container(
+                                                                    width: 180,
+                                                                    color: selectedSubClassification.value == (i == 0 ? '' : subClassification[i - 1].id.toString())
+                                                                        ? Colors
+                                                                            .green
+                                                                        : Color.fromARGB(
+                                                                            255,
+                                                                            148,
+                                                                            148,
+                                                                            150),
+                                                                    child:
+                                                                        InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        selectedSubClassification
+                                                                            .value = i ==
+                                                                                0
+                                                                            ? ''
+                                                                            : subClassification[i - 1].id.toString();
+                                                                        selectSubClassification(
+                                                                            selectedSubClassification.value);
+                                                                      },
+                                                                      child:
+                                                                          Center(
+                                                                        child: Text(i ==
+                                                                                0
+                                                                            ? 'All'
+                                                                            : subClassification[i - 1].name),
+                                                                      ),
+                                                                    ),
+                                                                  ));
+                                                        })),
+                                              ),
+                                              Expanded(
+                                                  child: GridView.builder(
+                                                padding: EdgeInsets.all(8),
+                                                itemCount: products.length,
+                                                gridDelegate:
+                                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                                        mainAxisSpacing: 8,
+                                                        crossAxisSpacing: 8,
+                                                        childAspectRatio: 2,
+                                                        crossAxisCount: 4),
+                                                itemBuilder: (context, i) =>
+                                                    InkWell(
+                                                  onTap: () {
+                                                    selectedProduct.value =
+                                                        products[i];
+                                                  },
+                                                  child: Container(
+                                                    color: Colors.green,
+                                                    child: Center(
+                                                        child: Text(
+                                                            products[i].name)),
+                                                  ),
+                                                ),
+                                              )),
+                                            ],
+                                          )),
+                                    ),
+                                  ],
+                                )
+                              : Container(
+                                  width: double.infinity,
+                                  color: Color.fromARGB(255, 54, 54, 54),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        '${selectedProduct.value?.name.capitalize}',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 25),
+                                      )
+                                    ],
+                                  ),
+                                ))),
                       Container(
+                        color: Colors.black,
                         width: double.infinity,
+                        height: 100,
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                cashRegistryService
+                                    .navigateTo(CashRegistryModule.menu);
+                              },
+                              child: Container(
+                                color: Colors.red,
+                                height: double.infinity,
+                                width: 100,
+                                child: Center(
+                                  child: Text(
+                                    'EXIT',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 350,
+                  height: double.infinity,
+                  child: Column(
+                    children: [
+                      Expanded(
+                          child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        padding: EdgeInsets.all(8),
+                        color: Colors.white,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Text('Sub Category'),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              height: 80,
-                              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                              child: ScrollConfiguration(
-                                behavior: ScrollConfiguration.of(context)
-                                    .copyWith(dragDevices: {
-                                  PointerDeviceKind.touch,
-                                  PointerDeviceKind.mouse,
-                                }),
-                                child: Obx(() => ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: subClassification.length + 1,
-                                    itemBuilder: (context, i) {
-                                      return Container(
-                                        width: 200.0,
-                                        child: Obx(() => Card(
-                                              color: selectedSubClassification
-                                                          .value ==
-                                                      (i == 0
-                                                          ? ''
-                                                          : subClassification[
-                                                                  i - 1]
-                                                              .id
-                                                              .toString())
-                                                  ? Colors.green
-                                                  : null,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  selectedSubClassification
-                                                      .value = i ==
-                                                          0
-                                                      ? ''
-                                                      : subClassification[i - 1]
-                                                          .id
-                                                          .toString();
-                                                  selectSubClassification(
-                                                      selectedSubClassification
-                                                          .value);
-                                                },
-                                                child: Center(
-                                                  child: Text(i == 0
-                                                      ? 'All'
-                                                      : subClassification[i - 1]
-                                                          .name),
-                                                ),
-                                              ),
-                                            )),
-                                      );
-                                    })),
-                              ),
-                            )
+                            Obx(() => Text(
+                                  'Order # ' +
+                                      '${cashRegistryService.orderController.selectedOrder.value?.id.toString().padLeft(8, '0')}',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                            Obx(() => Text(
+                                  'Customer : ${cashRegistryService.orderController.selectedOrder.value?.customer}',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                )),
                           ],
                         ),
-                      ),
-                      Expanded(
-                          child: Obx(() => GridView.builder(
-                              itemCount: products.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 4),
-                              itemBuilder: (context, i) => Card(
-                                    child: Obx(() {
-                                      return InkWell(
-                                        onTap: () {
-                                          cashRegistryService.orderController
-                                              .addOrderItem(order.value!.id,
-                                                  products[i], 1);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child: Column(
-                                            children: [
-                                              Center(
-                                                  child:
-                                                      Text(products[i].name)),
-                                              Spacer(),
-
-                                              if (cashRegistryService
-                                                  .orderController.orderItems
-                                                  .any((element) =>
-                                                      element.value.sku ==
-                                                      products[i].sku))
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    IconButton(
-                                                        onPressed: () async {
-                                                          await cashRegistryService
-                                                              .orderController
-                                                              .removeItemQuantity(
-                                                            cashRegistryService
-                                                                .orderController
-                                                                .selectedOrder
-                                                                .value!
-                                                                .id,
-                                                            products[i].sku,
-                                                          );
-                                                        },
-                                                        icon:
-                                                            Icon(Icons.remove)),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          cashRegistryService
-                                                              .orderController
-                                                              .addItemQuantity(
-                                                            cashRegistryService
-                                                                .orderController
-                                                                .selectedOrder
-                                                                .value!
-                                                                .id,
-                                                            products[i].sku,
-                                                          );
-                                                        },
-                                                        icon: Icon(Icons.add)),
-                                                  ],
-                                                )
-
-                                              // else
-                                              //   ElevatedButton(
-                                              //       onPressed: () {
-
-                                              //       },
-                                              //       child: Text('Add'))
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  )))),
-                    ],
-                  ),
-                ),
-                Container(
-                  // color: Colors.blue,
-                  width: 400,
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: Obx(() => ListView.builder(
-                                itemCount: cashRegistryService
-                                    .orderController.orderItems.length,
-                                padding: EdgeInsets.all(10),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(
-                                    onTap: () {},
-                                    leading:
-                                        Icon(Icons.check_box_outline_blank),
-                                    title: Text(cashRegistryService
-                                        .orderController
-                                        .orderItems[index]
-                                        .value
-                                        .product
-                                        .name),
-                                    subtitle: Obx(() => Text(
-                                        'Quantity: ${cashRegistryService.orderController.orderItems[index].value.quantity}')),
-                                    trailing: Text((double.parse(
-                                                cashRegistryService
-                                                    .orderController
-                                                    .orderItems[index]
-                                                    .value
-                                                    .product
-                                                    .price) *
-                                            cashRegistryService
-                                                .orderController
-                                                .orderItems[index]
-                                                .value
-                                                .quantity)
-                                        .toStringAsFixed(2)),
-                                  );
-                                },
-                              ))),
+                      )),
+                      // Container(
+                      //   padding: EdgeInsets.all(10),
+                      //   height: 150,
+                      //   width: double.infinity,
+                      //   color: Colors.orange,
+                      // ),
                       Container(
+                        color: Colors.black,
+                        width: double.infinity,
+                        height: 100,
+                        padding: EdgeInsets.all(10),
+                        child: Container(
+                          color: Colors.green,
+                          height: double.infinity,
                           width: double.infinity,
-                          // color: Colors.amber,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [Text('Sub Total'), Text('')],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [Text('Total VAT'), Text('')],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [Text('Payable Amount'), Text('')],
-                                ),
-                                Container(
-                                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                    height: 100,
-                                    width: double.infinity,
-                                    child: Card(
-                                        child: InkWell(
-                                      onTap: () {},
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child:
-                                            Center(child: Text('Place Order')),
-                                      ),
-                                    )))
-                              ],
+                          child: Center(
+                            child: Text(
+                              'Place Order | Bill Out | Close',
+                              textAlign: TextAlign.center,
                             ),
-                          )
-                          // Expanded(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(10),
-                          //     child: Column(
-                          //       children: [
-                          //         Expanded(
-                          //             child: Column(
-                          //           crossAxisAlignment:
-                          //               CrossAxisAlignment.start,
-                          //           children: [
-                          //             Padding(
-                          //               padding: const EdgeInsets.all(8.0),
-                          //               child: Text('Payment(s)'),
-                          //             ),
-                          //             Expanded(
-                          //               child: ListView(
-                          //                 padding: EdgeInsets.fromLTRB(
-                          //                     10, 0, 10, 10),
-                          //                 children: [
-                          //                   Row(
-                          //                     children: [Text('data')],
-                          //                   )
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         )),
-                          //         Spacer(),
-                          //         Container(
-                          //           color: Colors.red,
-                          //           height: 100,
-                          //           width: double.infinity,
-                          //           child: Column(
-                          //             crossAxisAlignment:
-                          //                 CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text('Total Amount'),
-                          //               Text('Payment Amount')
-                          //             ],
-                          //           ),
-                          //         ),
-                          //         // Container(
-                          //         //   width: double.infinity,
-                          //         //   child: FilledButton(
-                          //         //     onPressed: () {},
-                          //         //     child: Padding(
-                          //         //       padding: const EdgeInsets.all(15),
-                          //         //       child: const Text('Place Order'),
-                          //         //     ),
-                          //         //   ),
-                          //         // ),
-                          //         Container(
-                          //           padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          //           height: 100,
-                          //           width: double.infinity,
-                          //           child: Card(
-                          //               child: InkWell(
-                          //             onTap: () {},
-                          //             child: Padding(
-                          //               padding: const EdgeInsets.all(8.0),
-                          //               child:
-                          //                   Center(child: Text('Place Order')),
-                          //             ),
-                          //           )),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // )
-                          )
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 )
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(10),
-            height: 100,
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  width: 200.0,
-                  child: Card(
-                    child: InkWell(
-                      onTap: () {
-                        cashRegistryService.navigateTo(CashRegistryModule.menu);
-                      },
-                      child: Center(
-                        child: Text('New Order'),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 200.0,
-                  child: Card(
-                    child: Center(
-                      child: Text('Void'),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 200.0,
-                  child: Card(
-                    child: Center(
-                      child: Text('Item 1'),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 200.0,
-                  child: Card(
-                    child: Center(
-                      child: Text('Item 1'),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 200.0,
-                  child: Card(
-                    child: Center(
-                      child: Text('Discount'),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+        ),
+      ],
+    ));
   }
 }
