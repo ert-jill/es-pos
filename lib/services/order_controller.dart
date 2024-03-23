@@ -16,7 +16,14 @@ class OrderController extends GetxController {
 
   selectOrder(BigInt orderId) async {
     selectedOrder.value = await getOrder(orderId);
-    // orderItems.value = await getOrderItems(orderId);
+    orderItems.value = await getOrderItems(orderId);
+  }
+
+  Rx<OrderItem>? isProductInOrderItems(Product product) {
+    // return orderItems.any(
+    //     (obj) => obj.value.product.id == product.id && !obj.value.isPlaced);
+    return orderItems.firstWhereOrNull(
+        (obj) => obj.value.product.id == product.id && !obj.value.isPlaced);
   }
 
   Future<Order?> getOrder(BigInt id) async {
@@ -43,7 +50,7 @@ class OrderController extends GetxController {
   Future<List<Rx<OrderItem>>> getOrderItems(BigInt orderId) async {
     try {
       final response =
-          await httpService.getRequest('orders/get_order_item/?order=$orderId');
+          await httpService.getRequest('orders/order_item_update/$orderId/');
       if (response.isOk) {
         final List<dynamic> jsonList = jsonDecode(response.bodyString ?? '');
         List<Rx<OrderItem>> orderItemListFromJson =
@@ -60,63 +67,60 @@ class OrderController extends GetxController {
   }
 
   //add order item
-  addOrderItem(BigInt order_id, Product product, int quantity) async {
-    int foundOrder =
-        orderItems.indexWhere((obj) => obj.value.sku == product.sku);
-    if (foundOrder > -1) {
-      addItemQuantity(order_id, product.sku);
+  addOrderItem(BigInt order_id, String product, int quantity) async {
+    OrderItemFormModel orderItemFormModel = OrderItemFormModel();
+    orderItemFormModel.order = order_id.toString();
+    orderItemFormModel.product = product;
+    orderItemFormModel.quantity = quantity.toString();
+    OrderItem? orderItem = await addOrderItemRequest(orderItemFormModel);
+
+    if (orderItem != null) {
+      orderItems.add(orderItem.obs);
+      orderItems.refresh();
+      return true;
     } else {
-      OrderItemFormModel orderItemFormModel = OrderItemFormModel();
-      orderItemFormModel.order = order_id.toString();
-      orderItemFormModel.sku = product.sku;
-      orderItemFormModel.quantity = quantity.toString();
-      OrderItem? orderItem = await addOrderItemRequest(orderItemFormModel);
-
-      if (orderItem != null) {
-        orderItems.add(orderItem.obs);
-        orderItems.refresh();
-      }
+      return false;
     }
   }
 
-  //
-  addItemQuantity(BigInt order, String sku) async {
-    int foundOrder = orderItems
-        .indexWhere((obj) => order == obj.value.order && obj.value.sku == sku);
-    if (foundOrder != -1) {
-      OrderItem? orderItem = await setProductQuantity(
-          orderItems[foundOrder].value.id,
-          orderItems[foundOrder].value.quantity + 1);
-      if (orderItem != null) {
-        orderItems[foundOrder].value.quantity = orderItem.quantity;
-        orderItems[foundOrder].value.productTotal = orderItem.productTotal;
-        orderItems[foundOrder].refresh();
-      }
-    }
-  }
+  // //
+  // addItemQuantity(BigInt order, String sku) async {
+  //   int foundOrder = orderItems
+  //       .indexWhere((obj) => order == obj.value.order && obj.value.sku == sku);
+  //   if (foundOrder != -1) {
+  //     OrderItem? orderItem = await setProductQuantity(
+  //         orderItems[foundOrder].value.id,
+  //         orderItems[foundOrder].value.quantity + 1);
+  //     if (orderItem != null) {
+  //       orderItems[foundOrder].value.quantity = orderItem.quantity;
+  //       orderItems[foundOrder].value.productTotal = orderItem.productTotal;
+  //       orderItems[foundOrder].refresh();
+  //     }
+  //   }
+  // }
 
-  removeItemQuantity(BigInt order, String sku) async {
-    int foundOrder = orderItems
-        .indexWhere((obj) => order == obj.value.order && obj.value.sku == sku);
-    if (foundOrder != -1) {
-      if (orderItems[foundOrder].value.quantity > 1) {
-        OrderItem? orderItem = await setProductQuantity(
-            orderItems[foundOrder].value.id,
-            orderItems[foundOrder].value.quantity - 1);
-        if (orderItem != null) {
-          print('here i am');
-          orderItems[foundOrder].value.quantity = orderItem.quantity;
-          orderItems[foundOrder].value.productTotal = orderItem.productTotal;
-          orderItems[foundOrder].refresh();
-        }
-      }
-    }
-  }
+  // removeItemQuantity(BigInt order, String sku) async {
+  //   int foundOrder = orderItems
+  //       .indexWhere((obj) => order == obj.value.order && obj.value.sku == sku);
+  //   if (foundOrder != -1) {
+  //     if (orderItems[foundOrder].value.quantity > 1) {
+  //       OrderItem? orderItem = await setProductQuantity(
+  //           orderItems[foundOrder].value.id,
+  //           orderItems[foundOrder].value.quantity - 1);
+  //       if (orderItem != null) {
+  //         print('here i am');
+  //         orderItems[foundOrder].value.quantity = orderItem.quantity;
+  //         orderItems[foundOrder].value.productTotal = orderItem.productTotal;
+  //         orderItems[foundOrder].refresh();
+  //       }
+  //     }
+  //   }
+  // }
 
-  indexOfProductInOrder(String sku) {
-    int foundOrder = orderItems.indexWhere((obj) => obj.value.sku == sku);
-    return foundOrder;
-  }
+  // indexOfProductInOrder(String sku) {
+  //   int foundOrder = orderItems.indexWhere((obj) => obj.value.sku == sku);
+  //   return foundOrder;
+  // }
 
   Future<List<Order>> getOrderList() async {
     var response = await httpService.getRequest('orders/');
@@ -159,7 +163,7 @@ class OrderController extends GetxController {
       OrderItemFormModel orderItemFormModel) async {
     try {
       final response = await httpService.postRequest(
-          'orders/add_order_item/', orderItemFormModel.toJson());
+          'orders/order_item_create/', orderItemFormModel.toJson());
       if (response.isOk) {
         return OrderItem.fromJson(response.body);
       } else {

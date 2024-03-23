@@ -76,48 +76,58 @@ class Order {
 
 class OrderItem {
   BigInt id;
-  String? sku;
+  // String? sku;
   BigInt order;
   Product product;
   double quantity;
-  String productTotal;
-  String productDiscount;
+  // String productTotal;
+  // String productDiscount;
   bool isVoid;
+  bool isPlaced;
 
   OrderItem({
-    this.sku,
+    // this.sku,
     required this.id,
     required this.order,
     required this.product,
     required this.quantity,
-    required this.productTotal,
-    required this.productDiscount,
+    // required this.productTotal,
+    // required this.productDiscount,
     required this.isVoid,
+    required this.isPlaced,
   });
+
+  @override
+  bool operator ==(other) {
+    return other is OrderItem && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
-      id: BigInt.from(json['id']),
-      sku: json['sku'],
-      order: BigInt.parse(json['order'].toString()),
-      product: Product.fromJson(json['product']),
-      quantity: double.parse(json['quantity']),
-      productTotal: json['product_total'],
-      productDiscount: json['product_discount'],
-      isVoid: json['is_void'],
-    );
+        id: BigInt.from(json['id']),
+        // sku: json['sku'],
+        order: BigInt.parse(json['order'].toString()),
+        product: Product.fromJson(json['product']),
+        quantity: double.parse(json['quantity']),
+        // productTotal: json['product_total'],
+        // productDiscount: json['product_discount'],
+        isVoid: json['is_void'],
+        isPlaced: json['is_placed']);
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'sku': sku,
       'order': order,
       'product': product.toJson(),
       'quantity': quantity.toString(),
-      'product_total': productTotal,
-      'product_discount': productDiscount,
+      // 'product_total': productTotal,
+      // 'product_discount': productDiscount,
       'is_void': isVoid,
+      'is_placed': isPlaced
     };
   }
 }
