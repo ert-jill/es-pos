@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pos/models/classification.dart';
 import 'package:pos/models/product.dart';
+import 'package:pos/services/order_controller.dart';
 
 import '../models/order.dart';
 import '../services/cash_registry_service.dart';
@@ -24,6 +25,8 @@ class OrderWidget extends StatelessWidget {
   RxList<Classification> subClassification = RxList.empty();
   RxList<Product> products = RxList.empty();
   Rx<Product?> selectedProduct = Rx(null); // flag if has selected a product
+  Rx<OrderItem?> selectedOrderItem =
+      Rx(null); // flag if has selected a order item
 
   Rx<String> selectedMainClassification = ''.obs;
   Rx<String> selectedSubClassification = ''.obs;
@@ -37,6 +40,8 @@ class OrderWidget extends StatelessWidget {
     // subClassification.value =
     //     await classificationController.getClassificationList1(null, '1');
   }
+
+  selectProduct() {}
 
   selectMainClassification(String classification) async {
     selectedMainClassification.value = classification;
@@ -223,22 +228,37 @@ class OrderWidget extends StatelessWidget {
                                                         .orderController
                                                         .isProductInOrderItems(
                                                             products[i]);
+
                                                 return InkWell(
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       selectedProduct.value =
                                                           products[i];
-                                                      if (!cashRegistryService
-                                                          .orderController
-                                                          .addOrderItem(
-                                                              cashRegistryService
-                                                                  .orderController
-                                                                  .selectedOrder
-                                                                  .value!
-                                                                  .id,
-                                                              products[i].sku,
-                                                              1)) {
-                                                        print(
-                                                            'did not add order item');
+
+                                                      if (orderItem == null) {
+                                                        OrderItem?
+                                                            newOrderItem =
+                                                            await cashRegistryService
+                                                                .orderController
+                                                                .addOrderItem(
+                                                                    cashRegistryService
+                                                                        .orderController
+                                                                        .selectedOrder
+                                                                        .value!
+                                                                        .id,
+                                                                    products[i]
+                                                                        .sku,
+                                                                    1);
+
+                                                        if (newOrderItem !=
+                                                            null) {
+                                                          selectedOrderItem
+                                                                  .value =
+                                                              newOrderItem;
+                                                        }
+                                                      } else {
+                                                        selectedOrderItem
+                                                                .value =
+                                                            orderItem.value;
                                                       }
                                                     },
                                                     child: Container(
@@ -273,7 +293,7 @@ class OrderWidget extends StatelessWidget {
                                     child: Container(
                                       color: Colors.red,
                                       height: double.infinity,
-                                      width: 100,
+                                      width: 120,
                                       child: Center(
                                         child: Text(
                                           'EXIT',
@@ -293,13 +313,74 @@ class OrderWidget extends StatelessWidget {
                           // width: double.infinity,
                           // height: double.infinity,
                           color: Color.fromARGB(255, 54, 54, 54),
-                          padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              Text(
-                                '${selectedProduct.value?.name.capitalize}',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 25),
+                              Obx(() => Container(
+                                    padding: EdgeInsets.all(10),
+                                    alignment: Alignment.center,
+                                    width: double.infinity,
+                                    color: Colors.white,
+                                    child: Text(
+                                      '${selectedProduct.value?.name.capitalize} - (${selectedOrderItem.value?.id.toString().padLeft(8, '0')})',
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 25),
+                                    ),
+                                  )),
+                              Expanded(child: Container()),
+                              Container(
+                                height: 100,
+                                padding: EdgeInsets.all(10),
+                                color: Colors.black,
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // selectedProduct.value=null;
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        color: Colors.red,
+                                        child: Center(
+                                          child: Text(
+                                            'Remove\nItem',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        OrderItem?
+                                            newOrderItem = await cashRegistryService
+                                                .orderController
+                                                .addOrderItem(
+                                                    cashRegistryService
+                                                        .orderController
+                                                        .selectedOrder
+                                                        .value!
+                                                        .id,
+                                                    selectedProduct.value!.sku,
+                                                    1);
+                                        if (newOrderItem != null) {
+                                          selectedOrderItem.value =
+                                              newOrderItem;
+                                        }
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        color: Colors.blue,
+                                        child: Center(
+                                          child: Text(
+                                            'Duplicate',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               )
                             ],
                           ),
@@ -353,12 +434,8 @@ class OrderWidget extends StatelessWidget {
                                           (BuildContext context, int index) {
                                         return ListTile(
                                           onTap: () {},
-                                          title: Text(cashRegistryService
-                                              .orderController
-                                              .orderItems[index]
-                                              .value
-                                              .product
-                                              .name),
+                                          title: Text(
+                                              '${cashRegistryService.orderController.orderItems[index].value.id.toString().padLeft(8, '0')} - ${cashRegistryService.orderController.orderItems[index].value.product.name}'),
                                           subtitle: Obx(() => Text(
                                               '${cashRegistryService.orderController.orderItems[index].value.quantity} * ${cashRegistryService.orderController.orderItems[index].value.product.price}')),
                                           trailing: Text(
@@ -376,7 +453,7 @@ class OrderWidget extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Obx(() => Text(
-                                          'Sub Total ₱ ${cashRegistryService.orderController.selectedOrder.value?.totalAmount.toStringAsFixed(2)}',
+                                          'Sub Total ₱ ${OrderController.getSumOfOrderItems(cashRegistryService.orderController.orderItems).toStringAsFixed(2)}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500),

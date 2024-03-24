@@ -55,20 +55,22 @@ class StartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Obx(() => Scaffold(
-            appBar: (widget.value != 'Cash Registry')
-                ? AppBar(
-                    title: Obx(() => Text(widget.value)),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                        child: Obx(() => Text(
-                              '${timeController.currentTime}',
-                              style: TextStyle(fontSize: 24),
-                            )),
-                      ),
-                    ],
-                  )
-                : null,
+            appBar:
+                // (widget.value != 'Cash Registry')
+                //     ?
+                AppBar(
+              title: Obx(() => Text(widget.value)),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  child: Obx(() => Text(
+                        '${timeController.currentTime}',
+                        style: TextStyle(fontSize: 24),
+                      )),
+                ),
+              ],
+            ),
+            // : null,
             drawer: Drawer(
                 child: Column(
               children: [

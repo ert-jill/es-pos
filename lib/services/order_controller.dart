@@ -67,7 +67,8 @@ class OrderController extends GetxController {
   }
 
   //add order item
-  addOrderItem(BigInt order_id, String product, int quantity) async {
+  Future<OrderItem?> addOrderItem(
+      BigInt order_id, String product, int quantity) async {
     OrderItemFormModel orderItemFormModel = OrderItemFormModel();
     orderItemFormModel.order = order_id.toString();
     orderItemFormModel.product = product;
@@ -77,10 +78,21 @@ class OrderController extends GetxController {
     if (orderItem != null) {
       orderItems.add(orderItem.obs);
       orderItems.refresh();
-      return true;
+      return orderItem;
     } else {
-      return false;
+      return null;
     }
+  }
+
+  //sum of order items
+  static double getSumOfOrderItems(RxList<Rx<OrderItem>> orderItems) {
+    double sum = orderItems.fold(
+        0,
+        (previousValue, element) =>
+            previousValue +
+            (double.parse(element.value.product.price) *
+                element.value.quantity));
+    return sum;
   }
 
   // //
