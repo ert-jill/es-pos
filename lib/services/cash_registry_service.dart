@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos/services/order_controller.dart';
+import 'package:pos/services/setting_service.dart';
 import 'package:pos/services/timer.dart';
 import '../screens/dine.dart';
 import '../screens/menu.dart';

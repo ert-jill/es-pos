@@ -7,9 +7,11 @@ import 'package:pos/services/user_service.dart';
 
 import 'services/auth_service.dart';
 import 'services/http_service.dart';
+import 'services/setting_service.dart';
 
 void main() {
   // Initialize GetX services
+  Get.put(SettingService());
   Get.put(StorageService());
   Get.put(HttpService('http://127.0.0.1:8000/api/'));
   Get.put(AuthService());

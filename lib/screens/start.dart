@@ -9,6 +9,7 @@ import 'package:pos/screens/product.dart';
 import 'package:pos/screens/table.dart';
 import 'package:pos/screens/user.dart';
 import 'package:pos/screens/user_type.dart';
+import 'package:pos/services/setting_service.dart';
 import 'package:pos/services/user_service.dart';
 
 import '../services/auth_service.dart';
@@ -59,7 +60,7 @@ class StartScreen extends StatelessWidget {
                 // (widget.value != 'Cash Registry')
                 //     ?
                 AppBar(
-              title: Obx(() => Text(widget.value)),
+              title: Text(widget.value),
               actions: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),

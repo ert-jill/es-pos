@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pos/models/form.dart';
 import 'package:pos/screens/dine.dart';
+import 'package:pos/services/setting_service.dart';
 
 import '../models/order.dart';
 import '../services/cash_registry_service.dart';

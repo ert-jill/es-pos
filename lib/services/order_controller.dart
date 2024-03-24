@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:pos/models/form.dart';
 
@@ -19,11 +21,53 @@ class OrderController extends GetxController {
     orderItems.value = await getOrderItems(orderId);
   }
 
-  Rx<OrderItem>? isProductInOrderItems(Product product) {
-    // return orderItems.any(
-    //     (obj) => obj.value.product.id == product.id && !obj.value.isPlaced);
-    return orderItems.firstWhereOrNull(
-        (obj) => obj.value.product.id == product.id && !obj.value.isPlaced);
+  bool isProductInOrderItems(Product product) {
+    return (orderItems.firstWhereOrNull((obj) =>
+            obj.value.product.id == product.id && !obj.value.isPlaced) !=
+        null);
+  }
+
+  Future<Rx<OrderItem>> getOrderItem(Product product) async {
+    List<Rx<OrderItem>> result = orderItems
+        .where(
+            (obj) => obj.value.product.id == product.id && !obj.value.isPlaced)
+        .toList();
+    if (result.length > 1) {
+      Rx<OrderItem> res = await Get.dialog(Center(
+        child: SizedBox(
+          width: 800,
+          height: 700,
+          child: Material(
+            color: Colors.transparent,
+            child: GridView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: result.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 3),
+                itemBuilder: (context, index) => InkWell(
+                      onTap: () {
+                        Get.back(result: result[index]);
+                      },
+                      child: Container(
+                        color: Colors.red,
+                        child: Center(
+                          child: Text(
+                            '${result[index].value.id.toString().padLeft(8, '0')}\n${result[index].value.product.name}',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    )),
+          ),
+        ),
+      ));
+
+      return res;
+    } else {
+      return result[0];
+    }
   }
 
   Future<Order?> getOrder(BigInt id) async {

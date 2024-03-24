@@ -24,7 +24,7 @@ class OrderWidget extends StatelessWidget {
   RxList<Classification> mainClassification = RxList.empty();
   RxList<Classification> subClassification = RxList.empty();
   RxList<Product> products = RxList.empty();
-  Rx<Product?> selectedProduct = Rx(null); // flag if has selected a product
+  // Rx<Product?> selectedProduct = Rx(null); // flag if has selected a product
   Rx<OrderItem?> selectedOrderItem =
       Rx(null); // flag if has selected a order item
 
@@ -87,7 +87,7 @@ class OrderWidget extends StatelessWidget {
             color: Colors.black,
             child: Row(
               children: [
-                Obx(() => selectedProduct.value == null
+                Obx(() => selectedOrderItem.value == null
                     ? Expanded(
                         child: Column(
                           children: [
@@ -223,7 +223,19 @@ class OrderWidget extends StatelessWidget {
                                                     crossAxisCount: 4),
                                             itemBuilder: (context, i) => Obx(
                                               () {
-                                                Rx<OrderItem>? orderItem =
+                                                // Rx<OrderItem?> orderItem =
+                                                //     Rx(null);
+                                                // cashRegistryService
+                                                //     .orderController
+                                                //     .isProductInOrderItems(
+                                                //         products[i])
+                                                //     .then((result) {
+                                                //   // Handle the result
+                                                //   orderItem.value =
+                                                //       result?.value;
+                                                // });
+
+                                                bool isProductInOrderItems =
                                                     cashRegistryService
                                                         .orderController
                                                         .isProductInOrderItems(
@@ -231,10 +243,10 @@ class OrderWidget extends StatelessWidget {
 
                                                 return InkWell(
                                                     onTap: () async {
-                                                      selectedProduct.value =
-                                                          products[i];
+                                                      // selectedProduct.value =
+                                                      //     products[i];
 
-                                                      if (orderItem == null) {
+                                                      if (!isProductInOrderItems) {
                                                         OrderItem?
                                                             newOrderItem =
                                                             await cashRegistryService
@@ -256,20 +268,29 @@ class OrderWidget extends StatelessWidget {
                                                               newOrderItem;
                                                         }
                                                       } else {
+                                                        Rx<OrderItem>
+                                                            orderItem =
+                                                            await cashRegistryService
+                                                                .orderController
+                                                                .getOrderItem(
+                                                                    products[
+                                                                        i]);
                                                         selectedOrderItem
                                                                 .value =
                                                             orderItem.value;
                                                       }
                                                     },
-                                                    child: Container(
-                                                      color: orderItem != null
-                                                          ? Colors.red
-                                                          : Colors.green,
-                                                      child: Center(
-                                                          child: Text(
-                                                              products[i]
-                                                                  .name)),
-                                                    ));
+                                                    child: Obx(() => Container(
+                                                          color:
+                                                              isProductInOrderItems
+                                                                  ? Colors.red
+                                                                  : Colors
+                                                                      .green,
+                                                          child: Center(
+                                                              child: Text(
+                                                                  products[i]
+                                                                      .name)),
+                                                        )));
                                               },
                                             ),
                                           )),
@@ -319,9 +340,9 @@ class OrderWidget extends StatelessWidget {
                                     padding: EdgeInsets.all(10),
                                     alignment: Alignment.center,
                                     width: double.infinity,
-                                    color: Colors.white,
+                                    color: Colors.green,
                                     child: Text(
-                                      '${selectedProduct.value?.name.capitalize} - (${selectedOrderItem.value?.id.toString().padLeft(8, '0')})',
+                                      '${selectedOrderItem.value?.product.name.capitalize} - (${selectedOrderItem.value?.id.toString().padLeft(8, '0')})',
                                       style: TextStyle(
                                           color: Colors.black, fontSize: 25),
                                     ),
@@ -361,7 +382,8 @@ class OrderWidget extends StatelessWidget {
                                                         .selectedOrder
                                                         .value!
                                                         .id,
-                                                    selectedProduct.value!.sku,
+                                                    selectedOrderItem
+                                                        .value!.product.sku,
                                                     1);
                                         if (newOrderItem != null) {
                                           selectedOrderItem.value =
@@ -388,7 +410,7 @@ class OrderWidget extends StatelessWidget {
                       )),
                 GestureDetector(
                   onTap: () {
-                    selectedProduct.value = null;
+                    selectedOrderItem.value = null;
                   },
                   child: Container(
                     width: 400,
@@ -425,6 +447,7 @@ class OrderWidget extends StatelessWidget {
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500),
                                   )),
+                              Divider(),
                               Expanded(
                                 child: Obx(() => ListView.builder(
                                       itemCount: cashRegistryService
@@ -432,20 +455,47 @@ class OrderWidget extends StatelessWidget {
                                       // padding: EdgeInsets.all(10),
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return ListTile(
-                                          onTap: () {},
-                                          title: Text(
-                                              '${cashRegistryService.orderController.orderItems[index].value.id.toString().padLeft(8, '0')} - ${cashRegistryService.orderController.orderItems[index].value.product.name}'),
-                                          subtitle: Obx(() => Text(
-                                              '${cashRegistryService.orderController.orderItems[index].value.quantity} * ${cashRegistryService.orderController.orderItems[index].value.product.price}')),
-                                          trailing: Text(
-                                            '₱ ${(double.parse(cashRegistryService.orderController.orderItems[index].value.product.price) * cashRegistryService.orderController.orderItems[index].value.quantity).toStringAsFixed(2)}',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        );
+                                        return Obx(() => Container(
+                                              color:
+                                                  selectedOrderItem.value?.id ==
+                                                          cashRegistryService
+                                                              .orderController
+                                                              .orderItems[index]
+                                                              .value
+                                                              .id
+                                                      ? Colors.green
+                                                      : null,
+                                              child: ListTile(
+                                                selectedColor: Colors.white,
+                                                selected: selectedOrderItem
+                                                        .value?.id ==
+                                                    cashRegistryService
+                                                        .orderController
+                                                        .orderItems[index]
+                                                        .value
+                                                        .id,
+                                                onTap: () {
+                                                  selectedOrderItem.value =
+                                                      cashRegistryService
+                                                          .orderController
+                                                          .orderItems[index]
+                                                          .value;
+                                                },
+                                                title: Text(
+                                                    '${cashRegistryService.orderController.orderItems[index].value.id.toString().padLeft(8, '0')} - ${cashRegistryService.orderController.orderItems[index].value.product.name}'),
+                                                subtitle: Obx(() => Text(
+                                                    '   ${cashRegistryService.orderController.orderItems[index].value.quantity} * ${cashRegistryService.orderController.orderItems[index].value.product.price}')),
+                                                trailing: Text(
+                                                  '₱ ${(double.parse(cashRegistryService.orderController.orderItems[index].value.product.price) * cashRegistryService.orderController.orderItems[index].value.quantity).toStringAsFixed(2)}',
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ));
                                       },
                                     )),
                               ),
+                              Divider(),
                               Container(
                                 width: double.infinity,
                                 height: 120,
@@ -471,7 +521,7 @@ class OrderWidget extends StatelessWidget {
                                               fontWeight: FontWeight.w500),
                                         )),
                                     Obx(() => Text(
-                                          'Total ₱ ${cashRegistryService.orderController.selectedOrder.value?.totalAmount.toStringAsFixed(2)}',
+                                          'Total ₱ ${OrderController.getSumOfOrderItems(cashRegistryService.orderController.orderItems).toStringAsFixed(2)}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500),
