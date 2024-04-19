@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:pos/models/form.dart';
+import 'package:pos/services/user_service.dart';
 
 import '../models/account.dart';
 import '../models/order.dart';
@@ -13,6 +14,7 @@ import 'http_service.dart';
 class OrderController extends GetxController {
   final HttpService httpService = Get.find<HttpService>();
   late Rx<Order?> selectedOrder = Rx(null); //hold current selected order
+  final UserService userService = Get.find<UserService>();
   RxList<Rx<OrderItem>> orderItems =
       RxList.empty(); //get order items of selected order
 
@@ -25,6 +27,128 @@ class OrderController extends GetxController {
     return (orderItems.firstWhereOrNull((obj) =>
             obj.value.product.id == product.id && !obj.value.isPlaced) !=
         null);
+  }
+
+  printOrderReceipt() {
+    Get.dialog(
+      Material(
+          color: Colors.transparent,
+          child: Center(
+              child: Container(
+            padding: EdgeInsets.fromLTRB(0, 50, 0, 50),
+            width: 350,
+            child: Container(
+                color: Colors.white,
+                child: ListView(
+                  padding: EdgeInsets.fromLTRB(10, 100, 10, 100),
+                  children: [
+                    Text(
+                      'POS',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Kechin Store',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Capt. Leon St. Tapilon,\nDaanbantayan,\nCebu',
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Contact : 09352769085',
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Cashier : ${userService.user.value!.firstName} ${userService.user.value!.lastName}',
+                    ),
+                    ...orderItems
+                        .map((element) => ListTile(
+                              title: Text(
+                                  '${element.value.id.toString().padLeft(8, '0')} - ${element.value.product.name}'),
+                              subtitle: Text(
+                                  '${element.value.quantity.toStringAsFixed(0)}'),
+                              trailing: Text(
+                                  '₱ ${(element.value.quantity * double.parse(element.value.product.price)).toStringAsFixed(2)}'),
+                            ))
+                        .toList(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Subtotal : '),
+                        Text(
+                            '₱ ${OrderController.getSumOfOrderItems(orderItems).toStringAsFixed(2)}')
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Total Discount : '),
+                        Text(
+                            '₱ ${selectedOrder.value?.totalDiscount.toStringAsFixed(2)}')
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Total : '),
+                        Text(
+                            '₱ ${OrderController.getSumOfOrderItems(orderItems).toStringAsFixed(2)}')
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Thank You and Come again!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Like us on facebook & instagram:\nKichen Store',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      '***OFFICIAL | RE-PRINT***\n***PARTIAL***',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                )),
+          ))),
+    );
   }
 
   Future<Rx<OrderItem>> getOrderItem(Product product) async {
